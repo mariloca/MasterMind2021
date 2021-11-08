@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <div class="message">Restart the game!</div>
+    <form action="/restart" method="post">
+      <button class="btn btn-primary" type="submit">Restart</button>
+    </form>
+
+{% endblock %}
