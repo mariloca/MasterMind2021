@@ -13,7 +13,7 @@ def randomnumbergenerate(num, min, max):
     #decode the byte to unicode
     newlist=numlist.decode()
     return newlist.split()
-    
+
 
 #helper
 def buildrequestparameterNR(num, min, max):
@@ -35,6 +35,4 @@ def reportquota():
     request.add_header('User-Agent', 'randomwrapy/0.1 very alpha')
     opener = urllib.request.build_opener()
     quota = opener.open(request).read()
-    print("This IP address has", quota, "bits left. Visit http://www.random.org/quota for more information.")    
-    
-    
+    print("This IP address has", quota, "bits left. Visit http://www.random.org/quota for more information.")

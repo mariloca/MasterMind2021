@@ -47,26 +47,26 @@ db = SQL("sqlite:///mastermind.db")
 @login_required
 def index():
     #secret=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-    print(secret)
-    #score=100
-    #print("score",score)
-    #return render_template('index.html')
+    #print(secret)
+
 
     #Get current timestamp and score
-    #session["id"]
     userdict=db.execute("SELECT username FROM user WHERE id=:id", id=session["id"])
     username=userdict[0]['username']
-    maxdict=db.execute("SELECT MAX(timestamp) as maxstamp FROM records WHERE username=:username",username=username)
+    maxdict=db.execute("SELECT MAX(timestamp) as maxstamp, secret FROM records WHERE username=:username",username=username)
     maxstamp=maxdict[0]['maxstamp']
     # get secret for current timestamp
-    #secret=maxdict[0]['secret']
-    print('maxstamp',maxstamp)
+    secret=maxdict[0]['secret']
+
+    print('maxdict',maxdict)
 
 
     mindict=db.execute("SELECT MIN(attempt) as minattempt FROM records WHERE username=:username AND timestamp=:timestamp",
                username=username, timestamp=maxstamp)
     minattempt=mindict[0]['minattempt']
+
     scoredict=db.execute("SELECT score, attempt FROM records WHERE timestamp=:timestamp AND username=:username AND attempt=:attempt",timestamp=maxstamp, username=username, attempt=minattempt)
+    print("scoredict", scoredict)
     score=scoredict[0]["score"]
     attempt=scoredict[0]["attempt"]
     print("score, attempt", score, attempt)
@@ -79,18 +79,25 @@ def index():
         else:
             guess = request.form.get("guess")
             if not guess:
-                print("guess flag")
                 flash("Missing Symbol")
                 #return redirect(url_for('index'))
                 #return ('', 204)
                 #return redirect("/")
                 return render_template("index.html")
-                #return ("Missing symbol")
             else:
                 #Insert each guess into database
                 print("current attempt",attempt)
-                score_res=mainloop.guessloop(secret, guess, score)
+                #Test
+                #secret=263
+                #Convert int secret to list secret
+                secretlist = [str(x) for x in str(secret)]
+                # check if MSB == 0
+                if secret//1000 == 0:
+                    secretlist.insert(0, '0')
+                print('secretlist',secretlist)
+                score_res=mainloop.guessloop(secretlist, guess, score)
 
+                #score_res.append(guess)
                 flash(score_res)
                 newscore=score_res[0]
                 compareresult=score_res[1][0]
@@ -108,7 +115,7 @@ def index():
                 if compareresult == 1:
                     flash("You win! Let's try again")
                     #need to redirect to restart page and regenerate secret
-                    #return redirect(url_for('index'))
+                    return redirect(url_for('restart'))
 
 
                 print("after guess attempt", attempt)
@@ -121,7 +128,7 @@ def index():
                 #return render_template("index.html")
     flash("You failed! Let's try again!")
     #need to redirect to restart page and regenerate secret
-    #return redirect(url_for('index'))
+    return redirect(url_for('restart'))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -157,11 +164,14 @@ def login():
 
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=request.form.get("username"))
         # generate secret in login page and pass into database row
-        secret=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        strings = [str(integer) for integer in secretlist]
+        a_string = "".join(strings)
+        secret = int(a_string)
         print('max',maxtimestamp)
         if maxtimestamp[0]['MaxT']==None:
-            db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)",
-               username=request.form.get("username"), score=100, attempt=10, timestamp=0, secret=secret)
+            db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
+               username=request.form.get("username"), score=100, attempt=10, guess=None, timestamp=0, almost=None, bingo=None, secret=secret)
 
             '''
             test = db.execute("SELECT * FROM records WHERE username=:username", username=request.form.get("username"))
@@ -170,8 +180,8 @@ def login():
             '''
         else:
             currenttimestamp=maxtimestamp[0]['MaxT']+1
-            db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)",
-               username=request.form.get("username"), score=100, attempt=10, timestamp=currenttimestamp, secret=secret)
+            db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
+               username=request.form.get("username"), score=100, attempt=10, guess=None, timestamp=currenttimestamp, almost=None, bingo=None, secret=secret)
             print('current',currenttimestamp)
         # Redirect user to home page
         flash('Logged in!')
@@ -183,28 +193,35 @@ def login():
 
 
 @app.route("/restart", methods=["GET", "POST"])
+@login_required
 def restart():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
+        '''
         # Query database for username
         rows = db.execute("SELECT * FROM user WHERE username=:username",
                           username=request.form.get("username"))
         # Remember which user has logged in
         session["id"] = rows[0]["id"]
+        '''
 
-        maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=request.form.get("username"))
+        userdict=db.execute("SELECT username FROM user WHERE id=:id", id=session["id"])
+        username=userdict[0]['username']
+
+        maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=username)
         # generate secret in restart page and pass into database row
-        secret=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        strings = [str(integer) for integer in secretlist]
+        a_string = "".join(strings)
+        secret = int(a_string)
         print('max',maxtimestamp)
         if maxtimestamp[0]['MaxT']==None:
-            db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)",
-               username=request.form.get("username"), score=100, attempt=10, timestamp=0, secret=secret)
-
+            db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
+               username=username, score=100, attempt=10, guess=None, timestamp=0, almost=None, bingo=None, secret=secret)
         else:
             currenttimestamp=maxtimestamp[0]['MaxT']+1
-            db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)",
-               username=request.form.get("username"), score=100, attempt=10, timestamp=currenttimestamp, secret=secret)
+            db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
+               username=username, score=100, attempt=10, guess=None, timestamp=currenttimestamp, almost=None, bingo=None, secret=secret)
             print('current',currenttimestamp)
         # Redirect user to home page
         return redirect("/")
@@ -257,7 +274,10 @@ def register():
                           username=username)
         # Remember which user has logged in
         session["id"] = rows[0]["id"]
-        secret=rand.randomnumbergenerate(4,0,7)
+        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        strings = [str(integer) for integer in secretlist]
+        a_string = "".join(strings)
+        secret = int(a_string)
         #Insert timestamp to the new user
         db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)", username=username, score=100, attempt=10, timestamp=0, secret=secret)
 
