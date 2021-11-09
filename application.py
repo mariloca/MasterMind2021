@@ -120,9 +120,9 @@ def index():
                 holdings = db.execute(
                     "SELECT score, attempt, guess, almost, bingo FROM records WHERE username=:username AND timestamp=:timestamp", username=username, timestamp=maxstamp)
                 print("holdings", holdings)
-                #return render_template("index.html", holdings=holdings)
+                return render_template("index.html", holdings=holdings)
 
-                return redirect(url_for('index'))
+                #return redirect(url_for('index'))
 
                 #flash(symbol)
                 #return redirect("/")
@@ -165,7 +165,8 @@ def login():
 
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=request.form.get("username"))
         # generate secret in login page and pass into database row
-        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        secretlist=["3","3","5","1"]
         strings = [str(integer) for integer in secretlist]
         a_string = "".join(strings)
         secret = int(a_string)
@@ -211,7 +212,8 @@ def restart():
 
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=username)
         # generate secret in restart page and pass into database row
-        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        secretlist=["3","3","5","1"]
         strings = [str(integer) for integer in secretlist]
         a_string = "".join(strings)
         secret = int(a_string)
@@ -275,7 +277,8 @@ def register():
                           username=username)
         # Remember which user has logged in
         session["id"] = rows[0]["id"]
-        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+        secretlist=["3","3","5","1"]
         strings = [str(integer) for integer in secretlist]
         a_string = "".join(strings)
         secret = int(a_string)
