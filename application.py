@@ -40,14 +40,9 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///mastermind.db")
 
-#secret=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-#print(secret)
-
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    #secret=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-    #print(secret)
 
 
     #Get current timestamp and score
@@ -119,8 +114,14 @@ def index():
 
 
                 print("after guess attempt", attempt)
-
                 #return ('', 204)
+
+                #Get guess data from database to display in index.html
+                holdings = db.execute(
+                    "SELECT score, attempt, guess, almost, bingo FROM records WHERE username=:username AND timestamp=:timestamp", username=username, timestamp=maxstamp)
+                print("holdings", holdings)
+                #return render_template("index.html", holdings=holdings)
+
                 return redirect(url_for('index'))
 
                 #flash(symbol)

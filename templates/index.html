@@ -55,6 +55,30 @@
 
             </div>
         </form>
+
+        <!---
+        <div action-"/">
+            <table>
+                <tr>
+                    <th>Your Score</th>
+                    <th>Attempt</th>
+                    <th>Your Guess</th>
+                    <th>Correct number</th>
+                    <th>Correct number in correct position</th>
+                </tr>
+                {% for item in holdings %}
+                    <tr>
+                        <td>{{ item['score'] }}</td>
+                        <td>{{ item['attempt'] }}</td>
+                        <td>{{ item['guess'] }}</td>
+                        <td>{{ item['almost'] }}</td>
+                        <td>{{ item['bingo'] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+        --->
     </body>
 </html>
 {% extends "layout.html" %}
