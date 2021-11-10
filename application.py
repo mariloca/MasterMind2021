@@ -252,7 +252,6 @@ def register():
 @app.route("/logout")
 def logout():
     """Log user out"""
-
     # Forget any user_id
     session.clear()
 
