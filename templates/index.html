@@ -18,6 +18,10 @@
     div.input-group{
       width:40%;
     }
+
+    table, th, td {
+      border: 1px solid black;
+    }
     </style>
     <body>
         <ul>
@@ -25,8 +29,7 @@
           <li><a href="{{ url_for('register') }}">Register</a></li>
           <li><a href="{{ url_for('login') }}">Login</a></li>
           <li><a href="{{ url_for('restart') }}">Restart</a></li>
-            <!---<li><a href="index.html">Home</a></li>--->
-            <!---<li><a href="test.html">Test</a></li>--->
+
 
         </ul>
 
@@ -34,25 +37,9 @@
 
         <form action="/" method="post">
 
-         <!---
-          <div class="input-group">
-                <input type="text" class="form-control" name="test">
-                <button class="btn btn-outline-secondary" type="button">Go</button>
-          </div>
-
-          <div class="input-group">
-             <input type="text" class="form-control">
-             <span class="input-group-btn">
-                  <button class="btn btn-default" type="submit">Go!</button>
-             </span>
-          </div>
-          --->
-
             <div class="form-group">
                 <input autocomplete="off" autofocus class="form-control" name="guess" placeholder="4 digit Number" type="text">
                 <button class="btn btn-primary" type="submit">Check</button>
-
-
             </div>
         </form>
 
@@ -78,7 +65,7 @@
             </table>
 
         </div>
-      
+
     </body>
 </html>
 {% extends "layout.html" %}
