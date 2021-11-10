@@ -26,7 +26,6 @@ def guessloop(secret,guess,score):
 			repeatdictcopy.add(key,value)
 
 		#Compare the guessdict and answerdict
-		print(guessint,answerdict, guessdict,repeatdictcopy)
 		compareresult=compareloop(4, guessint, answerdict, guessdict, repeatdictcopy)
 
 		if compareresult[0]==1:

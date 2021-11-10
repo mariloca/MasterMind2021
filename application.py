@@ -31,8 +31,7 @@ def index():
     userdict=db.execute("SELECT username FROM user WHERE id=:id", id=session["id"])
     username=userdict[0]['username']
     maxdict=db.execute("SELECT MAX(timestamp) as maxstamp, secret FROM records WHERE username=:username",username=username)
-    # Get secret for current timestamp
-    print("maxdict", maxdict)
+    # Get secret for current timestamp and secret
     maxstamp=maxdict[0]['maxstamp']
     secret=maxdict[0]['secret']
     print("secret", secret) #For demo use
@@ -55,12 +54,13 @@ def index():
             return render_template("index.html")
         else:
             guess = request.form.get("guess")
+            # Catch input error
             if not guess:
                 flash("Missing guess.")
                 return render_template("index.html")
-            elif len(str(guess))!=4: # Catch input error
+            elif len(str(guess))!=4:
                 return apology("Your guess must be a 4 digit number", 403)
-            elif guess.isnumeric()==False: # Catch input error
+            elif guess.isnumeric()==False:
                 return apology("You must enter a number", 403)
             else:
                 # Insert each guess into database
@@ -135,14 +135,12 @@ def login():
 
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=request.form.get("username"))
         # Generate secret in login page and pass into database row
-        #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-        secretlist=["0","0","5","1"]
+        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
+
         # Convert str list of secret to int
         strings = [str(integer) for integer in secretlist]
-        a_string = "".join(strings)
-        #secret = int(a_string)
-        secret=a_string
-        print("login secret", secret)
+        secret = "".join(strings)
+
         # Insert new start record when first login
         if maxtimestamp[0]['MaxT']==None:
             db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
@@ -152,7 +150,7 @@ def login():
             currenttimestamp=maxtimestamp[0]['MaxT']+1
             db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
                username=request.form.get("username"), score=100, attempt=10, guess=None, timestamp=currenttimestamp, almost=None, bingo=None, secret=secret)
-            print('current',currenttimestamp)
+
 
         # Redirect user to home page
         flash('Logged in!')
@@ -174,15 +172,11 @@ def restart():
 
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=username)
         # Generate secret in restart page and pass into database row
-        #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-        secretlist=["0","0","5","1"]
+        secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
 
         # Convert str list of secret to int
         strings = [str(integer) for integer in secretlist]
-        a_string = "".join(strings)
-        #secret = int(a_string)
-        secret=a_string
-        print("restart secret", secret)
+        secret = "".join(strings)
 
         # Insert new start record when first login
         if maxtimestamp[0]['MaxT']==None:
@@ -244,13 +238,10 @@ def register():
         # Remember which user has logged in
         session["id"] = rows[0]["id"]
         # Generate random number in a list for every Register and pass to database row
-        #secretlist=rand.randomnumbergenerate(4,0,7)
-        secretlist=["0","0","5","1"]
+        secretlist=rand.randomnumbergenerate(4,0,7)
         strings = [str(integer) for integer in secretlist]
-        a_string = "".join(strings)
-        #secret = int(a_string)
-        secret=a_string
-        print("register secret", secret)
+        secret = "".join(strings)
+
         #Insert new record to the new user
         db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)", username=username, score=100, attempt=10, timestamp=0, secret=secret)
 
