@@ -31,9 +31,9 @@ def index():
     userdict=db.execute("SELECT username FROM user WHERE id=:id", id=session["id"])
     username=userdict[0]['username']
     maxdict=db.execute("SELECT MAX(timestamp) as maxstamp, secret FROM records WHERE username=:username",username=username)
-    maxstamp=maxdict[0]['maxstamp']
-
     # Get secret for current timestamp
+    print("maxdict", maxdict)
+    maxstamp=maxdict[0]['maxstamp']
     secret=maxdict[0]['secret']
     print("secret", secret) #For demo use
     # Get Min attempt
@@ -48,7 +48,6 @@ def index():
 
     if score!=0:
         if request.method == "GET":
-
             '''
             Click home button while in index page, nothing happens, refresh current page
             and rerun sequence above, which resulting the same.
@@ -57,21 +56,23 @@ def index():
         else:
             guess = request.form.get("guess")
             if not guess:
-                flash("Missing Symbol")
-                #return ('', 204)
+                flash("Missing guess.")
                 return render_template("index.html")
-            elif len(str(guess))!=4:
+            elif len(str(guess))!=4: # Catch input error
                 return apology("Your guess must be a 4 digit number", 403)
+            elif guess.isnumeric()==False: # Catch input error
+                return apology("You must enter a number", 403)
             else:
                 # Insert each guess into database
-                '''Test: secret=263 (Corner cases: number starting with zero, Ex. 0263)'''
+                '''
+                Corner case:
+                1. secret=0000
+                2. guess=0000
+                Solution: change 'secret' and 'guess' type from int to text in database
+                '''
                 # Convert int secret to list secret
                 secretlist = [str(x) for x in str(secret)]
-                # Check if MSB == 0, handle corner cases
-                if secret//1000 == 0:
-                    secretlist.insert(0, '0')
-                # Check if guess is starting with zero, handle corner cases
-                
+
                 # Get current guess result
                 score_res=mainloop.guessloop(secretlist, guess, score)
                 newscore=score_res[0]
@@ -99,8 +100,6 @@ def index():
                     return redirect(url_for('restart'))
 
                 return render_template("index.html", holdings=holdings)
-                #return redirect(url_for('index'))
-
 
 
 
@@ -137,12 +136,13 @@ def login():
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=request.form.get("username"))
         # Generate secret in login page and pass into database row
         #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-        secretlist=["3","3","5","1"]
+        secretlist=["0","0","5","1"]
         # Convert str list of secret to int
         strings = [str(integer) for integer in secretlist]
         a_string = "".join(strings)
-        secret = int(a_string)
-
+        #secret = int(a_string)
+        secret=a_string
+        print("login secret", secret)
         # Insert new start record when first login
         if maxtimestamp[0]['MaxT']==None:
             db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
@@ -175,12 +175,14 @@ def restart():
         maxtimestamp = db.execute("SELECT MAX(timestamp) as MaxT FROM records WHERE username=:username", username=username)
         # Generate secret in restart page and pass into database row
         #secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-        secretlist=["3","3","5","1"]
+        secretlist=["0","0","5","1"]
 
         # Convert str list of secret to int
         strings = [str(integer) for integer in secretlist]
         a_string = "".join(strings)
-        secret = int(a_string)
+        #secret = int(a_string)
+        secret=a_string
+        print("restart secret", secret)
 
         # Insert new start record when first login
         if maxtimestamp[0]['MaxT']==None:
@@ -243,10 +245,12 @@ def register():
         session["id"] = rows[0]["id"]
         # Generate random number in a list for every Register and pass to database row
         #secretlist=rand.randomnumbergenerate(4,0,7)
-        secretlist=["3","3","5","1"]
+        secretlist=["0","0","5","1"]
         strings = [str(integer) for integer in secretlist]
         a_string = "".join(strings)
-        secret = int(a_string)
+        #secret = int(a_string)
+        secret=a_string
+        print("register secret", secret)
         #Insert new record to the new user
         db.execute("INSERT or IGNORE INTO records (username, score, attempt, timestamp, secret) VALUES (:username, :score, :attempt, :timestamp, :secret)", username=username, score=100, attempt=10, timestamp=0, secret=secret)
 

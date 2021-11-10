@@ -1,6 +1,5 @@
 import rand
 from dict import dictionary
-import color
 
 def defaultsetting():
 	digit=4
@@ -10,20 +9,10 @@ def defaultsetting():
 	return (digit, lower, upper, attempt)
 
 
-def guessloop(secret, guess,score):
+def guessloop(secret,guess,score):
 	'''Need to know current attempt'''
-	#Data preparation
-	#secret=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
-	#print(secret)
 	answerdict=convertlisttodict(secret)
 	repeatdict=repeattimedict(secret)
-	#deductpoint=10
-	#score=100
-	#attempt=10
-	#deductpoint=score/attempt #score of each attempt
-	#print("*****************************************\nAre you ready? Let's get started!")
-	#hint=input("Do you want to see the Hint? Please enter Y or N: ")
-
 	while True:
 		#Try-except step to catch input error
 		guessint=int(guess) #Check if 'guess' is a valid number input
@@ -37,24 +26,14 @@ def guessloop(secret, guess,score):
 			repeatdictcopy.add(key,value)
 
 		#Compare the guessdict and answerdict
+		print(guessint,answerdict, guessdict,repeatdictcopy)
 		compareresult=compareloop(4, guessint, answerdict, guessdict, repeatdictcopy)
 
 		if compareresult[0]==1:
 			break
-
 		else:
 			score-=10
 			break
-		'''
-		else:
-			#if hint=="Y": showhint(secret, guessint)
-			attempt=attempt-1
-			score=int(score-deductpoint)
-			#print("You have", attempt, "guesses left.\n===================================")
-			if attempt==0: break #game over
-		#except:
-	#		color.printred("Invalid input. Please enter a number.")
-		'''
 	return score, compareresult
 
 
@@ -111,6 +90,3 @@ def showhint(answerlist, guessnumber): #convert answerlist to integer
 		print("Hint: Your guess is bigger than the answer.")
 	elif guessnumber<answerlist:
 		print("Hint: Your guess is smaller than the answer.")
-
-#ss=guessloop(4,0,7,10)
-#print(ss)
