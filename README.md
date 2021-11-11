@@ -12,6 +12,7 @@
 - static: css file
 - templates: stores all the html templates
 - env: virtual environment
+- Mastermind game summary: project summary
 
 
 ## Installing
