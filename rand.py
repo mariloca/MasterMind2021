@@ -14,7 +14,6 @@ def randomnumbergenerate(num, min, max):
     newlist=numlist.decode()
     return newlist.split()
 
-
 #helper
 def buildrequestparameterNR(num, min, max):
     randomorg = 'https://www.random.org/integers/?num='

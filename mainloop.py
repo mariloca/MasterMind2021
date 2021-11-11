@@ -1,5 +1,5 @@
 import rand
-from dict import dictionary
+from helpers import dictionary
 
 def defaultsetting():
 	digit=4
@@ -81,11 +81,3 @@ def compareloop(num, guessint, answerdict, guessdict, repeatdictcopy):
 		print("Guess number:", guessint, "Correct number:", almost, "Correct position:", bingo)
 
 	return returnresult, almost, bingo
-
-
-def showhint(answerlist, guessnumber): #convert answerlist to integer
-	answerlist = int("".join(answerlist))
-	if guessnumber>answerlist:
-		print("Hint: Your guess is bigger than the answer.")
-	elif guessnumber<answerlist:
-		print("Hint: Your guess is smaller than the answer.")

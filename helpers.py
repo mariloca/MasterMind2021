@@ -34,3 +34,9 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+class dictionary(dict):
+    def __init__(self):
+        self = dict()
+    def add(self, key, value):
+        self[key] = value
