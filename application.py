@@ -54,14 +54,20 @@ def index():
             return render_template("index.html")
         else:
             guess = request.form.get("guess")
+            # Table data prepare for index page
+            guesses = db.execute(
+                "SELECT score, attempt, guess, almost, bingo FROM records WHERE username=:username AND timestamp=:timestamp",
+                username=username, timestamp=maxstamp)
             # Catch input error
             if not guess:
                 flash("Missing guess.")
-                return render_template("index.html")
+                return render_template("index.html", holdings=guesses)
             elif len(str(guess))!=4:
-                return apology("Your guess must be a 4 digit number", 403)
+                flash("Your guess must be a 4 digit number.")
+                return render_template("index.html", holdings=guesses)
             elif guess.isnumeric()==False:
-                return apology("You must enter a number", 403)
+                flash("You must enter a number.")
+                return render_template("index.html", holdings=guesses)
             else:
                 # Insert each guess into database
                 '''
@@ -87,7 +93,8 @@ def index():
 
                 # Get guess data from database to display in index.html
                 holdings = db.execute(
-                    "SELECT score, attempt, guess, almost, bingo FROM records WHERE username=:username AND timestamp=:timestamp", username=username, timestamp=maxstamp)
+                    "SELECT score, attempt, guess, almost, bingo FROM records WHERE username=:username AND timestamp=:timestamp",
+                    username=username, timestamp=maxstamp)
                 # Win condition
                 if compareresult == 1:
                     flash("You win! Let's try again")
@@ -116,15 +123,12 @@ def login():
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)
-
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
-
         # Query database for username
         rows = db.execute("SELECT * FROM user WHERE username=:username",
                           username=request.form.get("username"))
-
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["password"], request.form.get("password")):
@@ -150,7 +154,6 @@ def login():
             currenttimestamp=maxtimestamp[0]['MaxT']+1
             db.execute("INSERT or IGNORE INTO records (username, score, attempt, guess, timestamp, almost, bingo, secret) VALUES (:username, :score, :attempt, :guess, :timestamp, :almost, :bingo, :secret)",
                username=request.form.get("username"), score=100, attempt=10, guess=None, timestamp=currenttimestamp, almost=None, bingo=None, secret=secret)
-
 
         # Redirect user to home page
         flash('Logged in!')

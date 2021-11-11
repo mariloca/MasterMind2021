@@ -1,16 +1,47 @@
-<html lang="en">
-    <head>
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-        <link href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet">
-        <title>MasterMind game</title>
-    </head>
-    <style>
+{% extends "layout.html" %}
+
+{% block title %}
+    MasterMind
+{% endblock %}
+
+{% block style %}
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    #balance {
+      font-weight: bold;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+    }
+
     div.form-group{
       width:40%;
+      display: block;
     }
+    form{
+      display: inline-block;
+      margin: auto;
+      text-align: left;
+    }
+
     div.impact {
       font-family: Verdana, Geneva, sans-serif;
-      font-size: 40px;
+      font-size: 30px;
+      text-align: center;
+      color: red;
+    }
+    div.description {
+      font-family: Verdana, Geneva, sans-serif;
+      font-size: 12px;
       text-align: center;
       color: red;
     }
@@ -19,55 +50,47 @@
       width:40%;
     }
 
-    table, th, td {
-      border: 1px solid black;
+    .btn btn-primary{
+      padding-bottom:50px
     }
-    </style>
-    <body>
-        <ul>
-          <li><a href="{{ url_for('index') }}">Home</a></li>
-          <li><a href="{{ url_for('register') }}">Register</a></li>
-          <li><a href="{{ url_for('login') }}">Login</a></li>
-          <li><a href="{{ url_for('restart') }}">Restart</a></li>
 
 
-        </ul>
+{% endblock %}
 
-        <div class="impact">Welcome to MasterMind Game!</div>
-
-        <form action="/" method="post">
-
-            <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control" name="guess" placeholder="4 digit Number" type="text">
-                <button class="btn btn-primary" type="submit">Check</button>
-            </div>
-        </form>
+{% block main %}
 
 
-        <div action-"/">
-            <table>
-                <tr>
-                    <th>Your Score</th>
-                    <th>Attempt</th>
-                    <th>Your Guess</th>
-                    <th>Correct number</th>
-                    <th>Correct number in correct position</th>
-                </tr>
-                {% for item in holdings %}
-                    <tr>
-                        <td>{{ item['score'] }}</td>
-                        <td>{{ item['attempt'] }}</td>
-                        <td>{{ item['guess'] }}</td>
-                        <td>{{ item['almost'] }}</td>
-                        <td>{{ item['bingo'] }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
+    <div class="impact">Welcome to MasterMind Game!</div>
+    <div class="description">Please guess a 4 number combinations from 0~7 in 10 attempts. Good luck!</div>
 
-        </div>
+    <form action="/" method="post">
+      <div class="form-group">
+          <input autocomplete="off" autofocus class="form-control" name="guess" placeholder="4 digit Number" type="text">
+          <button class="btn btn-primary" type="submit">Check</button>
+      </div>
+    </form>
 
-    </body>
-</html>
-{% extends "layout.html" %}
-{% block body %}
+
+    <div action-"/">
+        <table>
+          <tr>
+              <th>Your Score</th>
+              <th>Attempt</th>
+              <th>Your Guess</th>
+              <th>Correct number</th>
+              <th>Correct number in correct position</th>
+          </tr>
+          {% for item in holdings %}
+              <tr>
+                  <td>{{ item['score'] }}</td>
+                  <td>{{ item['attempt'] }}</td>
+                  <td>{{ item['guess'] }}</td>
+                  <td>{{ item['almost'] }}</td>
+                  <td>{{ item['bingo'] }}</td>
+              </tr>
+          {% endfor %}
+        </table>
+
+    </div>
+
 {% endblock %}
