@@ -140,7 +140,7 @@ def login():
         # Generate secret in login page and pass into database row
         secretlist=rand.randomnumbergenerate(4,0,7) #Generate random number in a list
 
-        # Convert str list of secret to int
+        # Convert str list of secret str to store in database
         strings = [str(integer) for integer in secretlist]
         secret = "".join(strings)
 
