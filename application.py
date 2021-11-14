@@ -75,7 +75,7 @@ def index():
                 2. guess=0000
                 Solution: change 'secret' and 'guess' type from int to text in database
                 '''
-                # Convert int secret to list secret
+                # Convert str secret to list secret
                 secretlist = [str(x) for x in str(secret)]
 
                 # Get current guess result
