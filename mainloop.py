@@ -1,5 +1,6 @@
 import rand
 from helpers import dictionary
+import collections
 
 def defaultsetting():
 	digit=4
@@ -12,7 +13,8 @@ def defaultsetting():
 def guessloop(secret,guess,score):
 	'''Need to know current attempt'''
 	answerdict=convertlisttodict(secret)
-	repeatdict=repeattimedict(secret)
+	#repeatdict=repeattimedict(secret)
+	repeatdict=collections.Counter(secret)
 	while True:
 		#Try-except step to catch input error
 		guessint=int(guess) #Check if 'guess' is a valid number input
@@ -21,9 +23,11 @@ def guessloop(secret,guess,score):
 			guesslist.append(i)
 		guessdict=convertlisttodict(guesslist)
 		#Create a copy of the 'repeatdict' dictionary
-		repeatdictcopy=dictionary()
+		#repeatdictcopy=dictionary()
+		repeatdictcopy=dict()
 		for key,value in repeatdict.items():
-			repeatdictcopy.add(key,value)
+			repeatdictcopy[key]=value
+			#repeatdictcopy.add(key,value)
 
 		#Compare the guessdict and answerdict
 		compareresult=compareloop(4, guessint, answerdict, guessdict, repeatdictcopy)
@@ -38,25 +42,34 @@ def guessloop(secret,guess,score):
 
 
 def convertlisttodict(numlist):
-	i=0
-	numdict = dictionary()
+	#i=0
+	#numdict = dictionary()
+	numdict = dict()
+	'''
 	for number in numlist:
 		numdict.key=i
 		numdict.value=number
-		numdict.add(numdict.key, numdict.value)
+		#numdict.add(numdict.key, numdict.value)
 		i=i+1
+	'''
+	for i in range(0,len(numlist)):
+		numdict[i]=numlist[i]
 	return numdict
 
+'''
+# use collections.Counter
 def repeattimedict(numlist): #stores number as keys, number repeat times as values
-	i=0
-	repeatdict = dictionary()
+	#i=0
+	#repeatdict = dictionary()
+	repeatdict = dict()
+
 	for number in numlist:
 		repeatdict.key=numlist[i]
 		repeatdict.value=numlist.count(numlist[i])
 		repeatdict.add(repeatdict.key, repeatdict.value)
 		i=i+1
 	return repeatdict
-
+'''
 
 def compareloop(num, guessint, answerdict, guessdict, repeatdictcopy):
 	idx=0
